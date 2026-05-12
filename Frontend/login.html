@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login – MediCare</title>
+  <script>const t=localStorage.getItem('theme')??"dark";document.documentElement.classList.toggle('dark',t==='dark')</script>
+  <script type="module" src="/js/pages/login.js"></script>
+</head>
+<body class="min-h-screen bg-background text-foreground">
+
+  <div class="min-h-screen flex items-center justify-center px-4">
+    <div x-data="loginApp" class="w-full max-w-sm bg-card border border-border rounded-2xl shadow-sm p-8">
+
+      <div class="text-center mb-6">
+        <span class="text-4xl">🩺</span>
+        <h1 class="text-2xl font-bold mt-2">Welcome back</h1>
+        <p class="text-muted-foreground text-sm mt-1">Sign in to your MediCare account</p>
+      </div>
+
+      <div class="flex flex-col gap-1 mb-4">
+        <label class="text-sm font-medium">Email or Username</label>
+        <input type="text" x-model="email" placeholder="you@example.com"
+               @keydown.enter="handleLogin()"
+               class="w-full h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow" />
+      </div>
+
+      <div class="flex flex-col gap-1 mb-4">
+        <label class="text-sm font-medium">Password</label>
+        <div class="relative">
+          <input :type="showPassword ? 'text' : 'password'" x-model="password" placeholder="Your password"
+                 @keydown.enter="handleLogin()"
+                 class="w-full h-9 rounded-md border border-border bg-background px-3 pr-16 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow" />
+          <button type="button" @click="showPassword = !showPassword"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+            <span x-text="showPassword ? 'Hide' : 'Show'"></span>
+          </button>
+        </div>
+      </div>
+
+     
+      <p x-show="error" x-text="error" class="text-red-500 text-sm mb-3"></p>
+
+   
+      <button @click="handleLogin()" :disabled="loading"
+              class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-medium py-2.5 rounded-lg transition-colors">
+        <span x-text="loading ? 'Signing in…' : 'Login'"></span>
+      </button>
+
+      <p class="text-center text-sm text-muted-foreground mt-5">
+        Don't have an account?
+        <a href="/register.html" class="text-emerald-600 hover:underline font-medium">Register</a>
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>

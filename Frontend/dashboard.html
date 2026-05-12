@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – MediCare</title>
+  <script>const t=localStorage.getItem('theme')??"dark";document.documentElement.classList.toggle('dark',t==='dark')</script>
+  <script type="module" src="/js/pages/dashboard.js"></script>
+</head>
+<body class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-white">
+
+<div x-data="dashboardApp">
+
+  <!-- Top Nav -->
+  <header class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+    <div class="flex items-center gap-1.5">
+      <span class="text-emerald-600 dark:text-emerald-400 font-bold text-xl">Medi</span>
+      <span class="font-bold text-xl">Care</span>
+    </div>
+
+    <!-- Search -->
+    <div class="relative w-full max-w-sm mx-6">
+      <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
+      <input type="text" x-model="search" placeholder="Search features…"
+             class="w-full bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg pl-9 pr-4 py-2 text-sm outline-none focus:border-emerald-500 transition-colors" />
+      <div x-show="suggestions.length > 0"
+           class="absolute top-11 left-0 right-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
+        <template x-for="s in suggestions" :key="s.label">
+          <a :href="s.path" @click="search=''"
+             class="block w-full text-left px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+             x-text="s.label"></a>
+        </template>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="/settings.html" class="text-gray-400 hover:text-gray-600 dark:hover:text-white text-sm hidden sm:block transition-colors">⚙</a>
+      <span class="text-gray-500 dark:text-gray-400 text-sm hidden sm:block" x-text="user?.fullName"></span>
+      <button @click="logout()"
+              class="text-xs text-red-500 dark:text-red-400 hover:text-red-400 border border-red-300 dark:border-red-400/30 rounded-lg px-3 py-1.5 transition-colors">
+        Logout
+      </button>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-8 space-y-8">
+
+    <!-- Welcome Banner -->
+    <div class="rounded-2xl bg-linear-to-r from-emerald-700 to-emerald-500 p-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-bold text-white mb-1">Welcome back, <span x-text="firstName"></span> 👋</h1>
+        <p class="text-emerald-100 text-sm">Here's your health summary for today.</p>
+      </div>
+      <span class="text-5xl hidden sm:block">🩺</span>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-2 gap-4">
+      <template x-for="card in statCards" :key="card.label">
+        <div class="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-1 shadow-sm">
+          <span class="text-2xl" x-text="card.icon"></span>
+          <span class="text-2xl font-bold" :class="card.colorClass" x-text="card.value"></span>
+          <span class="text-xs text-gray-400 dark:text-gray-500" x-text="card.unit"></span>
+          <span class="text-xs text-gray-500 dark:text-gray-400" x-text="card.label"></span>
+        </div>
+      </template>
+    </div>
+
+    <!-- Quick Actions -->
+    <div>
+      <p class="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-widest mb-3">Quick Actions</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <template x-for="action in quickActions" :key="action.label">
+          <a :href="action.path"
+             class="text-white rounded-xl px-5 py-4 flex items-center gap-3 font-medium transition-colors text-left"
+             :class="action.bg">
+            <span class="text-2xl" x-text="action.icon"></span>
+            <span x-text="action.label"></span>
+          </a>
+        </template>
+      </div>
+    </div>
+
+    <!-- AI Assistant Banner -->
+    <div class="rounded-2xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-2xl shrink-0">🤖</div>
+        <div>
+          <h3 class="font-semibold text-gray-900 dark:text-white">AI Health Assistant</h3>
+          <p class="text-emerald-700 dark:text-emerald-300 text-sm">Describe your symptoms and get instant guidance.</p>
+        </div>
+      </div>
+      <a href="/consultation.html"
+         class="shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm">
+        Start Consultation
+      </a>
+    </div>
+
+    <!-- Health Tips -->
+    <div>
+      <p class="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-widest mb-3">Health Tips</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <template x-for="tip in healthTips" :key="tip.tip">
+          <div class="flex items-start gap-3 rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-4 py-3 shadow-sm">
+            <span class="text-xl mt-0.5" x-text="tip.icon"></span>
+            <p class="text-sm text-gray-500 dark:text-gray-400 leading-relaxed" x-text="tip.tip"></p>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <p class="text-center text-xs text-gray-400 dark:text-gray-600 pb-4">
+      ⚠ MediCare is for informational purposes only. Always consult a doctor for medical decisions.
+    </p>
+  </main>
+
+</div>
+</body>
+</html>

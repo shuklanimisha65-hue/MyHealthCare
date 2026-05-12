@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Register – MediCare</title>
+  <script>const t=localStorage.getItem('theme')??"dark";document.documentElement.classList.toggle('dark',t==='dark')</script>
+  <script type="module" src="/js/pages/register.js"></script>
+</head>
+<body class="min-h-screen bg-background text-foreground">
+
+  <div class="min-h-screen flex items-center justify-center px-4 py-8">
+    <div x-data="registerApp" class="w-full max-w-md bg-card border border-border rounded-2xl shadow-sm p-8 relative">
+
+    
+      <a href="/index.html"
+         class="absolute top-4 right-4 w-7 h-7 flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted transition-colors text-lg leading-none">✕</a>
+
+    
+      <h1 class="text-2xl font-bold mb-1">Create Account</h1>
+      <p class="text-sm text-muted-foreground mb-6">Fill in your details to get started</p>
+
+      
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">Username</label>
+          <input type="text" x-model="form.username" placeholder="e.g. john_doe"
+                 class="h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">Full Name</label>
+          <input type="text" x-model="form.fullName" placeholder="John Doe"
+                 class="h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow" />
+        </div>
+      </div>
+
+     
+      <div class="flex flex-col gap-1 mb-4">
+        <label class="text-sm font-medium">Email</label>
+        <input type="email" x-model="form.email" placeholder="john@example.com"
+               class="h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow" />
+      </div>
+
+    
+      <div class="flex flex-col gap-1 mb-4">
+        <label class="text-sm font-medium">Password</label>
+        <div class="relative">
+          <input :type="showPassword ? 'text' : 'password'" x-model="form.password" placeholder="Min. 8 characters"
+                 class="w-full h-9 rounded-md border border-border bg-background px-3 pr-16 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow" />
+          <button type="button" @click="showPassword = !showPassword"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+            <span x-text="showPassword ? 'Hide' : 'Show'"></span>
+          </button>
+        </div>
+      </div>
+
+  
+      <div class="grid grid-cols-2 gap-3 mb-4">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">Date of Birth</label>
+          <input type="date" x-model="form.dateOfBirth"
+                 class="h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">Gender</label>
+          <select x-model="form.gender"
+                  class="h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow">
+            <option value="">Select</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3 mb-5">
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">Blood Group</label>
+          <select x-model="form.bloodGroup"
+                  class="h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow">
+            <option value="">Select</option>
+            <option>A+</option><option>A-</option>
+            <option>B+</option><option>B-</option>
+            <option>AB+</option><option>AB-</option>
+            <option>O+</option><option>O-</option>
+          </select>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-sm font-medium">Device Type</label>
+          <select x-model="form.deviceType"
+                  class="h-9 rounded-md border border-border bg-background px-3 py-1 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 transition-shadow">
+            <option value="">Select device</option>
+            <option value="android">Android</option>
+            <option value="iphone">iPhone</option>
+            <option value="smartwatch">Smartwatch</option>
+          </select>
+        </div>
+      </div>
+
+    
+      <p x-show="error" x-text="error" class="text-sm text-red-400 bg-red-900/20 px-3 py-2 rounded-md mb-4"></p>
+
+  
+      <button @click="handleRegister()" :disabled="loading"
+              class="w-full bg-emerald-600 hover:bg-emerald-500 disabled:opacity-60 text-white font-medium py-2.5 rounded-lg transition-colors">
+        <span x-text="loading ? 'Creating account…' : 'Register'"></span>
+      </button>
+
+      <p class="text-center text-sm text-muted-foreground mt-5">
+        Already have an account?
+        <a href="/login.html" class="text-emerald-600 hover:underline font-medium">Sign in</a>
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>

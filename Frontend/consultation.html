@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Consultation – MediCare</title>
+  <script>const t=localStorage.getItem('theme')??"dark";document.documentElement.classList.toggle('dark',t==='dark')</script>
+  <script type="module" src="/js/pages/consultation.js"></script>
+</head>
+<body class="h-screen overflow-hidden bg-gray-950 text-white">
+
+<div x-data="consultApp" class="flex h-screen">
+
+  
+  <aside class="w-64 border-r border-gray-800 flex flex-col shrink-0">
+
+    
+    <div class="px-5 py-5 border-b border-gray-800">
+      <span class="text-emerald-400 font-bold text-lg">Medi</span><span class="text-white font-bold text-lg">Consult AI</span>
+    </div>
+
+    
+    <div class="px-3 pt-4 pb-2">
+      <button @click="showNewChat = true; chatError = ''"
+              class="w-full bg-emerald-600 hover:bg-emerald-500 text-white text-sm rounded-lg py-2 font-medium transition-colors">
+        + New Consultation
+      </button>
+    </div>
+
+    
+    <div class="flex-1 overflow-y-auto px-3 py-2 space-y-1">
+      <p class="text-gray-500 text-xs px-2 py-1 uppercase tracking-widest">Recent</p>
+      <template x-for="c in consultations" :key="c._id">
+        <button @click="selectConsultation(c._id)"
+                class="w-full text-left px-3 py-2.5 rounded-lg text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+          <p class="truncate font-medium" x-text="c.symptoms?.join(', ') || 'Consultation'"></p>
+          <p class="text-gray-500 text-xs mt-0.5" x-text="new Date(c.createdAt).toLocaleDateString()"></p>
+        </button>
+      </template>
+      <p x-show="consultations.length === 0 && !loading" class="text-gray-600 text-xs px-2 py-1">No consultations yet</p>
+    </div>
+
+   
+    <div class="border-t border-gray-800 px-3 py-3 space-y-1">
+      <a href="/settings.html"
+         class="block w-full text-left px-3 py-2 rounded-lg text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition-colors">
+        ⚙ Settings
+      </a>
+      <div class="flex items-center gap-3 px-3 py-2">
+        <div class="w-7 h-7 rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold text-white" x-text="initials"></div>
+        <p class="text-gray-400 text-sm truncate" x-text="user?.fullName"></p>
+      </div>
+    </div>
+  </aside>
+
+  
+  <main class="flex-1 flex flex-col min-w-0">
+
+    
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-800 shrink-0">
+      <div class="flex items-center gap-3 min-w-0">
+        <p x-show="activeConsultation"
+           class="text-gray-300 text-sm font-medium truncate"
+           x-text="activeConsultation?.symptoms?.join(', ')"></p>
+        <p x-show="!activeConsultation" class="text-gray-500 text-sm">No active consultation</p>
+
+        
+        <div x-show="activeConsultation" class="relative shrink-0">
+          <button @click="showConvoMenu = !showConvoMenu"
+                  class="w-7 h-7 flex items-center justify-center rounded-md text-gray-400 hover:text-white hover:bg-gray-800 transition-colors text-lg">⋮</button>
+          <div x-show="showConvoMenu" @click.outside="showConvoMenu = false"
+               class="absolute left-0 top-9 w-44 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50">
+            <button @click="showConvoMenu=false; activeConsultation=null; messages=[]"
+                    class="w-full text-left px-4 py-2.5 text-sm text-gray-300 hover:bg-gray-700 transition-colors rounded-t-lg">
+              ✕ Close Chat
+            </button>
+            <button @click="archiveConsultation()"
+                    class="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-gray-700 transition-colors rounded-b-lg">
+              🗑 Remove Consultation
+            </button>
+          </div>
+        </div>
+      </div>
+
+  
+      <div class="relative shrink-0">
+        <button @click="showDropdown = !showDropdown" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <div class="w-8 h-8 rounded-full bg-emerald-600 flex items-center justify-center text-sm font-bold text-white" x-text="initials"></div>
+          <span class="text-gray-300 text-sm hidden sm:block" x-text="user?.fullName"></span>
+          <span class="text-gray-500 text-xs">▾</span>
+        </button>
+        <div x-show="showDropdown" @click.outside="showDropdown = false"
+             class="absolute right-0 top-10 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50">
+          <a href="/profile.html"
+             class="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-gray-700 transition-colors rounded-t-lg">
+            👤 View Profile
+          </a>
+          <button @click="logout()"
+                  class="w-full text-left px-4 py-3 text-sm text-red-400 hover:bg-gray-700 transition-colors rounded-b-lg">
+            → Logout
+          </button>
+        </div>
+      </div>
+    </div>
+
+  
+    <div class="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+
+      
+      <template x-if="!activeConsultation && messages.length === 0 && !loading">
+        <div class="flex flex-col items-center justify-center h-full text-center gap-4">
+          <div class="text-5xl">🩺</div>
+          <h2 class="text-2xl font-bold" x-text="`Welcome, ${user?.fullName?.split(' ')[0] || 'User'}`"></h2>
+          <p class="text-gray-400 text-sm max-w-sm leading-relaxed">
+            Start a new consultation to describe your symptoms and get AI-powered health guidance.
+          </p>
+          <p class="text-amber-500 text-xs max-w-xs border border-amber-500/20 bg-amber-500/5 rounded-lg px-4 py-2">
+            ⚠ For emergencies, call 112 immediately.
+          </p>
+          <button @click="showNewChat = true; chatError = ''"
+                  class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-2 rounded-lg font-medium mt-2 transition-colors">
+            Start New Consultation
+          </button>
+        </div>
+      </template>
+
+   
+      <div x-show="chatError" class="flex items-center gap-2 bg-red-900/30 border border-red-700/50 text-red-400 text-sm px-4 py-3 rounded-xl">
+        <span>⚠</span>
+        <span class="flex-1" x-text="chatError"></span>
+        <button @click="chatError = ''" class="text-red-400 hover:text-red-300 text-lg leading-none">✕</button>
+      </div>
+
+
+      <template x-for="(msg, i) in messages" :key="i">
+        <div :class="msg.role === 'user' ? 'flex justify-end' : 'flex justify-start'">
+          <div :class="msg.role === 'user'
+                ? 'bg-emerald-600 text-white rounded-2xl rounded-br-sm'
+                : 'bg-gray-800 text-gray-200 rounded-2xl rounded-bl-sm'"
+               class="max-w-xl px-4 py-3 text-sm leading-relaxed"
+               x-text="msg.message">
+          </div>
+        </div>
+      </template>
+
+      <div x-show="loading || streaming" class="flex justify-start">
+        <div class="bg-gray-800 text-gray-400 text-sm px-4 py-3 rounded-2xl rounded-bl-sm flex items-center gap-2">
+          <span class="animate-pulse">●</span>
+          <span class="animate-pulse" style="animation-delay:0.2s">●</span>
+          <span class="animate-pulse" style="animation-delay:0.4s">●</span>
+        </div>
+      </div>
+
+      <div x-ref="messagesEnd"></div>
+    </div>
+
+    <div class="border-t border-gray-800 px-6 py-4 shrink-0">
+      <p class="text-gray-600 text-xs text-center mb-3">
+        MediConsult AI is for informational purposes only and not a substitute for professional medical advice.
+      </p>
+      <div class="flex items-center gap-2 bg-gray-900 border border-gray-700 rounded-xl px-4 py-2">
+        <label class="text-gray-400 hover:text-emerald-400 transition-colors text-lg shrink-0 cursor-pointer" title="Attach image">
+          +
+          <input type="file" accept="image/*" class="hidden" @change="imageFile = $event.target.files[0]" />
+        </label>
+        <input type="text" x-model="input" @keydown="handleKeyDown($event)"
+               :placeholder="activeConsultation ? 'Describe your symptoms…' : 'Type your symptoms and press Send to start…'"
+               :disabled="streaming || loading"
+               class="flex-1 bg-transparent text-gray-200 placeholder-gray-500 text-sm outline-none disabled:opacity-50" />
+        <button @click="sendMessage()" :disabled="!input.trim() || streaming || loading"
+                class="bg-emerald-600 hover:bg-emerald-500 disabled:opacity-40 text-white text-sm px-4 py-1.5 rounded-lg transition-colors shrink-0">
+          <span x-text="loading || streaming ? '…' : 'Send'"></span>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <template x-if="showNewChat">
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md shadow-2xl">
+        <h2 class="text-lg font-bold text-white mb-1">New Consultation</h2>
+        <p class="text-gray-500 text-sm mb-4">Describe what you're experiencing</p>
+
+        <div class="space-y-3">
+          <div>
+            <label class="text-gray-400 text-xs mb-1 block">Symptoms <span class="text-red-400">*</span></label>
+            <input type="text" x-model="symptoms" placeholder="e.g. headache, fever, sore throat"
+                   class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-emerald-600 transition-colors" />
+          </div>
+          <div>
+            <label class="text-gray-400 text-xs mb-1 block">Description (optional)</label>
+            <textarea x-model="symptomsDescription" rows="3" placeholder="Any additional details…"
+                      class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-gray-200 placeholder-gray-500 outline-none focus:border-emerald-600 transition-colors resize-none"></textarea>
+          </div>
+          <div>
+            <label class="text-gray-400 text-xs mb-1 block">Symptom Image (optional)</label>
+            <input type="file" accept="image/*" @change="imageFile = $event.target.files[0]"
+                   class="w-full text-gray-400 text-sm" />
+          </div>
+        </div>
+
+        <p class="text-amber-500/70 text-xs mt-4 leading-relaxed">
+          ⚠ For emergencies, please contact a doctor or call 112 immediately.
+        </p>
+
+        <div x-show="createError" class="text-sm text-red-400 bg-red-900/20 px-3 py-2 rounded-md mt-3" x-text="createError"></div>
+
+        <div class="flex gap-2 mt-5">
+          <button @click="showNewChat = false; createError = ''"
+                  class="flex-1 bg-gray-800 hover:bg-gray-700 text-gray-300 py-2 rounded-lg text-sm font-medium transition-colors">
+            Cancel
+          </button>
+          <button @click="createConsultation(symptoms, symptomsDescription)"
+                  :disabled="!symptoms.trim() || loading"
+                  class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-lg text-sm font-medium disabled:opacity-50 transition-colors">
+            <span x-text="loading ? 'Starting…' : 'Start Consultation'"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </template>
+
+</div>
+</body>
+</html>
