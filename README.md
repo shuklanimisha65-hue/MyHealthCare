@@ -1,2 +1,5 @@
 # MyHealthCare
-Backend API for MyHealthCare project using Node.js, Express, and MongoDB
+- **Backend:** Node.js, Express.js, MongoDB (Mongoose)
+- **Frontend:** HTML, CSS, JavaScript (Vite)
+- **Others:** JWT, Multer, Cloudinary
+
