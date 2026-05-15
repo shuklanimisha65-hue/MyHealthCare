@@ -11,7 +11,6 @@ Alpine.data('registerApp', () => ({
     dateOfBirth: '',
     gender: '',
     bloodGroup: '',
-    deviceType: '',
   },
   showPassword: false,
   error: '',

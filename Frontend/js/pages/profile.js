@@ -22,7 +22,6 @@ Alpine.data('profileApp', () => ({
       { label: 'Age',          value: u.age         ? `${u.age} years` : '—' },
       { label: 'Phone',        value: u.phone || '—' },
       { label: 'Blood Group',  value: u.bloodGroup || '—' },
-      { label: 'Device Type',  value: u.deviceType  ? u.deviceType.charAt(0).toUpperCase()  + u.deviceType.slice(1)  : '—' },
       { label: 'Role',         value: u.role        ? u.role.charAt(0).toUpperCase()        + u.role.slice(1)        : '—' },
     ]
   },
