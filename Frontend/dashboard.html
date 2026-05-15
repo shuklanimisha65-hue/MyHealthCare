@@ -11,14 +11,12 @@
 
 <div x-data="dashboardApp">
 
-  <!-- Top Nav -->
   <header class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
     <div class="flex items-center gap-1.5">
       <span class="text-emerald-600 dark:text-emerald-400 font-bold text-xl">Medi</span>
       <span class="font-bold text-xl">Care</span>
     </div>
 
-    <!-- Search -->
     <div class="relative w-full max-w-sm mx-6">
       <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
       <input type="text" x-model="search" placeholder="Search features…"
@@ -45,7 +43,6 @@
 
   <main class="max-w-5xl mx-auto px-6 py-8 space-y-8">
 
-    <!-- Welcome Banner -->
     <div class="rounded-2xl bg-linear-to-r from-emerald-700 to-emerald-500 p-6 flex items-center justify-between">
       <div>
         <h1 class="text-2xl font-bold text-white mb-1">Welcome back, <span x-text="firstName"></span> 👋</h1>
@@ -54,19 +51,6 @@
       <span class="text-5xl hidden sm:block">🩺</span>
     </div>
 
-    <!-- Stat Cards -->
-    <div class="grid grid-cols-2 gap-4">
-      <template x-for="card in statCards" :key="card.label">
-        <div class="rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-4 flex flex-col gap-1 shadow-sm">
-          <span class="text-2xl" x-text="card.icon"></span>
-          <span class="text-2xl font-bold" :class="card.colorClass" x-text="card.value"></span>
-          <span class="text-xs text-gray-400 dark:text-gray-500" x-text="card.unit"></span>
-          <span class="text-xs text-gray-500 dark:text-gray-400" x-text="card.label"></span>
-        </div>
-      </template>
-    </div>
-
-    <!-- Quick Actions -->
     <div>
       <p class="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-widest mb-3">Quick Actions</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -81,7 +65,6 @@
       </div>
     </div>
 
-    <!-- AI Assistant Banner -->
     <div class="rounded-2xl border border-emerald-500/30 bg-emerald-50 dark:bg-emerald-950/40 p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center text-2xl shrink-0">🤖</div>
@@ -96,7 +79,6 @@
       </a>
     </div>
 
-    <!-- Health Tips -->
     <div>
       <p class="text-gray-400 dark:text-gray-500 text-xs uppercase tracking-widest mb-3">Health Tips</p>
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -117,3 +99,4 @@
 </div>
 </body>
 </html>
+

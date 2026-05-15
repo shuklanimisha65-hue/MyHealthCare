@@ -21,7 +21,7 @@ Alpine.data('profileApp', () => ({
       { label: 'Date of Birth',value: u.dateOfBirth ? new Date(u.dateOfBirth).toLocaleDateString() : '—' },
       { label: 'Age',          value: u.age         ? `${u.age} years` : '—' },
       { label: 'Phone',        value: u.phone || '—' },
-      { label: 'Blood Group',  value: u.bloodGroup || '—' },
+      { label: 'Blood Group',  value: (u.bloodGroup && u.bloodGroup !== 'unknown') ? u.bloodGroup : '—' },
       { label: 'Role',         value: u.role        ? u.role.charAt(0).toUpperCase()        + u.role.slice(1)        : '—' },
     ]
   },
@@ -35,3 +35,5 @@ Alpine.data('profileApp', () => ({
 }))
 
 Alpine.start()
+
+

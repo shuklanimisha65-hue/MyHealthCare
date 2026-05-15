@@ -35,6 +35,7 @@ export const registerUser = asyncHandler(async (req, res) => {
         dateOfBirth,
         gender,
         phone,
+        bloodGroup,
     } = req.body;
 
     //Validation
@@ -96,7 +97,8 @@ export const registerUser = asyncHandler(async (req, res) => {
         dateOfBirth,
         gender: gender.toLowerCase(),
         phone: phone || undefined,
-        avatar: avatarUrl
+        avatar: avatarUrl,
+        bloodGroup: bloodGroup || undefined,
     });
 
     console.log('User created successfully!');
@@ -140,7 +142,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 export const loginUser = asyncHandler(async (req, res) => {
     console.log('Login request received');
 
-    const { emailOrUsername, password } = req.body || {}; //explain this 
+    const { emailOrUsername, password } = req.body || {};
 
     //Validate input
     if (!emailOrUsername || !password) {
@@ -153,7 +155,7 @@ export const loginUser = asyncHandler(async (req, res) => {
             { email: emailOrUsername.toLowerCase() },
             { username: emailOrUsername.toLowerCase() }
         ]
-    }).select('+password'); 
+    }).select('+password');
 
     if (!user) {
         throw new ApiError(401, 'Invalid credentials');
@@ -182,7 +184,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     //Cookie options
     const options = {
         httpOnly: true,
-        secure:true,
+        secure: true,
     };
 
     //Send response with cookies
@@ -201,7 +203,7 @@ export const loginUser = asyncHandler(async (req, res) => {
                 'Login successful'
             )
         );
-}); //i have written the generate tokens in register user but also in login user ...so i need to know why two times 
+});
 
 //Logout user
 export const logoutUser = asyncHandler(async (req, res) => {
@@ -211,7 +213,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
         {
             $unset: { refreshToken: 1 }
         },
-        { new: true } //what does this mean in this method findByIdandUpdate
+        { new: true }
     );
 
     //Cookie options
@@ -232,7 +234,7 @@ export const logoutUser = asyncHandler(async (req, res) => {
 
 //Refresh access token
 export const refreshAccessToken = asyncHandler(async (req, res) => {
-    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken; //what does this mean 
+    const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
 
     if (!incomingRefreshToken) {
         throw new ApiError(401, "Unauthorized request");
@@ -247,7 +249,6 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
 
         //Find user
         const user = await User.findById(decodedToken._id);
-        //why id here ?
 
         if (!user) {
             throw new ApiError(401, "Invalid refresh token");
@@ -377,3 +378,4 @@ export const updateAvatar = asyncHandler(async (req, res) => {
         new ApiResponse(200, { avatar: avatarUrl }, 'Avatar updated successfully')
     );
 });
+
