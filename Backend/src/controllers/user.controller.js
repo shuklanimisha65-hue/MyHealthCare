@@ -35,11 +35,10 @@ export const registerUser = asyncHandler(async (req, res) => {
         dateOfBirth,
         gender,
         phone,
-        deviceType
     } = req.body;
 
     //Validation
-    if ([username, email, fullName, password, dateOfBirth, gender, deviceType].some(
+    if ([username, email, fullName, password, dateOfBirth, gender].some(
         (field) => !field || field?.trim() === ""
     )) {
         throw new ApiError(400, "All required fields must be provided");
@@ -97,7 +96,6 @@ export const registerUser = asyncHandler(async (req, res) => {
         dateOfBirth,
         gender: gender.toLowerCase(),
         phone: phone || undefined,
-        deviceType: deviceType.toLowerCase(),
         avatar: avatarUrl
     });
 
@@ -377,20 +375,5 @@ export const updateAvatar = asyncHandler(async (req, res) => {
 
     res.status(200).json(
         new ApiResponse(200, { avatar: avatarUrl }, 'Avatar updated successfully')
-    );
-});
-
-//Update device token
-export const updateDeviceToken = asyncHandler(async (req, res) => {
-    const { deviceToken } = req.body;
-
-    if (!deviceToken) {
-        throw new ApiError(400, 'Device token is required');
-    }
-
-    await User.findByIdAndUpdate(req.user._id, { deviceToken });
-
-    res.status(200).json(
-        new ApiResponse(200, null, 'Device token updated successfully')
     );
 });

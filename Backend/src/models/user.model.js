@@ -58,12 +58,6 @@ const userSchema = new Schema({
         required: [true, "Gender is required"]
     },
 
-    deviceType: {
-        type: String,
-        enum: ["android", "iphone", "smartwatch"],
-        required: [true, "Device is necessary"],
-    },
-
     numberOfStepsEachDay: {
         type: Number,
         default: 10000,  

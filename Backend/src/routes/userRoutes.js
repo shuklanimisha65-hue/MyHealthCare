@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { loginUser, logoutUser, registerUser,getCurrentUser,refreshAccessToken,updateProfile,updateDeviceToken,updateAvatar,changePassword} from "../controllers/user.controller.js";
+import { loginUser, logoutUser, registerUser,getCurrentUser,refreshAccessToken,updateProfile,updateAvatar,changePassword} from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -30,11 +30,6 @@ router.route('/avatar').patch(
 router.route('/password').put(
     verifyJWT,
     changePassword
-);
-
-router.route('/device-token').patch(
-    verifyJWT,
-    updateDeviceToken
 );
 
 
